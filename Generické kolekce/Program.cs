@@ -6,6 +6,8 @@ Console.WriteLine("Hello, World!");
 var mujSeznam = new SpojovySeznam<int>();
 
 mujSeznam.VlozNaKonec(1);
+mujSeznam.VlozNaKonec(1);
+mujSeznam.VlozNaKonec(1);
 mujSeznam.VlozNaKonec(2);
 mujSeznam.VlozNaKonec(3);
 mujSeznam.VlozNaKonec(4);
@@ -13,6 +15,9 @@ mujSeznam.VlozNaKonec(5);
 Console.WriteLine(mujSeznam.ToString());
 mujSeznam.odeberIndex(2);
 Console.WriteLine(mujSeznam.ToString());
+
+Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Pocet()}");
+Console.WriteLine($"Kolikrat se objevuje zadany prvek: {mujSeznam.pocetPrvku(1)}");
 
 class SpojovySeznam<T> //LinkedList
 {
@@ -80,31 +85,49 @@ class SpojovySeznam<T> //LinkedList
     public T odeberIndex(int index)
     {
         var temp = zacatek;
-
-        if (index < 0 || temp == null)
+        if (temp == null)
         {
             throw new InvalidOperationException("Seznam je prazdny");
         }
-
         if (index == 0)
         {
             zacatek = zacatek.dalsi;
             return temp.hodn;
         }
-        else
+        for (int i = 0; i < index - 1; i++)
         {
-            Uzel pomocny = temp;
-            for (int i = 0; i < index; i++)
-            {
-                pomocny = temp;
-                temp = temp.dalsi;
-            }
-
-            pomocny = temp.dalsi;
+            temp = temp.dalsi;
         }
+        var temp2 = temp.dalsi;
+        temp.dalsi = temp.dalsi.dalsi;
+        return temp2.hodn;
+    }
+    
+    public int Pocet()
+    {
+        var temp = zacatek;
+        int pocet = 0;
+        while (temp != null)
+        {
+            pocet++;
+            temp = temp.dalsi;
+        }
+        return pocet;
+    }
 
-        return temp.hodn;
-        
+    public int pocetPrvku(T prvek)
+    {
+        var temp = zacatek;
+        int pocet = 0;
+        while (temp != null)
+        {
+            if (temp.hodn.Equals(prvek))
+            {
+                pocet++;
+            }
+            temp = temp.dalsi;
+        }
+        return pocet;
     }
 
     //DÚ:
