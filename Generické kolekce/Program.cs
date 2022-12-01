@@ -17,17 +17,19 @@ mujSeznam.odeberIndex(2);
 Console.WriteLine(mujSeznam.ToString());
 
 Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Pocet()}");
+Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Count}");
 Console.WriteLine($"Kolikrat se objevuje zadany prvek: {mujSeznam.pocetPrvku(1)}");
 
 class SpojovySeznam<T> //LinkedList
 {
     Uzel zacatek;
-    int Count { get; set; }
+    public int Count { get; set; }
     
     public void Vloz(T vstup)
     {
         Uzel novy = new Uzel(vstup, zacatek); //sel by pouzit i var
         zacatek = novy; //nejdulezitejsi cast prace se spojovymi seznamy
+        Count++;
     }
 
     public void VlozNaKonec(T vstup)
@@ -46,6 +48,7 @@ class SpojovySeznam<T> //LinkedList
             }
             temp.dalsi = novy;
         }
+        Count++;
     }
 
     public T odeberPrvni()
@@ -58,6 +61,7 @@ class SpojovySeznam<T> //LinkedList
         }
         
         zacatek = zacatek.dalsi;
+        Count--;
         return temp.hodn;
     }
 
@@ -79,6 +83,7 @@ class SpojovySeznam<T> //LinkedList
         }
         var temp2 = temp.dalsi;
         temp.dalsi = null;
+        Count--;
         return temp2.hodn;
     }
 
@@ -100,6 +105,7 @@ class SpojovySeznam<T> //LinkedList
         }
         var temp2 = temp.dalsi;
         temp.dalsi = temp.dalsi.dalsi;
+        Count--;
         return temp2.hodn;
     }
     
