@@ -1,24 +1,39 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Security.Cryptography.X509Certificates;
+﻿#region Spojovy seznam
+//Console.WriteLine("Spojovy seznam");
 
-Console.WriteLine("Hello, World!");
+//var mujSeznam = new SpojovySeznam<int>();
 
-var mujSeznam = new SpojovySeznam<int>();
+//mujSeznam.VlozNaKonec(1);
+//mujSeznam.VlozNaKonec(1);
+//mujSeznam.VlozNaKonec(1);
+//mujSeznam.VlozNaKonec(2);
+//mujSeznam.VlozNaKonec(3);
+//mujSeznam.VlozNaKonec(4);
+//mujSeznam.VlozNaKonec(5);
+//Console.WriteLine(mujSeznam.ToString());
+//mujSeznam.odeberIndex(2);
+//Console.WriteLine(mujSeznam.ToString());
 
-mujSeznam.VlozNaKonec(1);
-mujSeznam.VlozNaKonec(1);
-mujSeznam.VlozNaKonec(1);
-mujSeznam.VlozNaKonec(2);
-mujSeznam.VlozNaKonec(3);
-mujSeznam.VlozNaKonec(4);
-mujSeznam.VlozNaKonec(5);
-Console.WriteLine(mujSeznam.ToString());
-mujSeznam.odeberIndex(2);
-Console.WriteLine(mujSeznam.ToString());
+//Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Pocet()}");
+//Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Count}");
+//Console.WriteLine($"Kolikrat se objevuje zadany prvek: {mujSeznam.pocetPrvku(1)}");
 
-Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Pocet()}");
-Console.WriteLine($"Pocet prvku v kolekci: {mujSeznam.Count}");
-Console.WriteLine($"Kolikrat se objevuje zadany prvek: {mujSeznam.pocetPrvku(1)}");
+#endregion
+
+#region Binary tree
+Console.WriteLine("\nBinarni strom");
+
+var binaryTree = new BinarniStrom();
+
+binaryTree.Vloz(3);
+binaryTree.Vloz(5);
+binaryTree.Vloz(1);
+binaryTree.Vloz(7);
+binaryTree.Vloz(2);
+binaryTree.Vloz(4);
+
+Console.WriteLine(binaryTree.ToString());
+#endregion
 
 class SpojovySeznam<T> //LinkedList
 {
@@ -168,4 +183,146 @@ class SpojovySeznam<T> //LinkedList
             dalsi = d;
         }
     }
+}
+
+class BinarniStrom
+{
+    Uzel koren;
+    public int Count { get; set; }
+
+    public void Vloz(int vstup)
+    {
+        //checkuju existenci korene
+        if (koren == null)
+        {
+            koren = new Uzel(vstup);
+            return;
+        }
+        
+        VlozRekurzivne(koren, vstup);
+    }
+
+    void VlozRekurzivne(Uzel koren, int novy)
+    {
+        if (novy <= koren.hodn) //mensi a stejny prvky doleva
+        {
+            if (koren.levy == null)
+            {
+                koren.levy = new Uzel(novy);
+            }
+            else
+            {
+                VlozRekurzivne(koren.levy, novy);
+            }
+        }
+        else
+        {
+            if (koren.pravy == null)
+            {
+                koren.pravy = new Uzel(novy);
+            }
+            else
+            {
+                VlozRekurzivne(koren.pravy, novy);
+            }
+        }
+    }
+
+    public bool odeber(int vstup)
+    {
+        if (koren == null)
+        {
+            throw new InvalidOperationException("Seznam je prazdny");
+        }
+        return odeberRekurzivne(koren, vstup);
+    }
+
+    bool odeberRekurzivne(Uzel koren, int vstup)
+    {
+        if (koren.hodn == vstup)
+        {
+            /*
+             * 1) nemam zadneho potomka, u predchudce zmenim na null
+             * 2) mam jednoho potomka, u predchudce nahradim sebe potomkem
+             * 3) mam oba nasledniky, u predchudce nahradim sebe jednim naslednikem a podstrom druheho nalsednika, zaradim do prvniho naslednika
+             */
+        }
+        else if (vstup <= koren.hodn) //pujdu doleva
+        {
+            if (koren.levy == null)
+            {
+                return false;
+            }
+            else
+            {
+                return odeberRekurzivne(koren.levy, vstup);
+            }
+        }
+        else //pujdu doprava
+        {
+            if (koren.pravy == null)
+            {
+                return false;
+            }
+            else
+            {
+                return odeberRekurzivne(koren.pravy, vstup);
+            }
+        }
+    }
+
+    string vystup = "";
+
+    public override string ToString()
+    {
+        Uzel temp = koren;
+
+        if (temp != null)
+        {
+            VypisRekurzivne(koren);
+        }
+        
+        return vystup;
+    }
+
+    private void VypisRekurzivne(Uzel koren)
+    {
+        if (koren != null)
+        {
+            if (koren.levy != null)
+            {
+                VypisRekurzivne(koren.levy);
+            }
+            
+            vystup += koren.hodn + " ";
+            
+            if (koren.pravy != null)
+            {
+                VypisRekurzivne(koren.pravy);
+            }
+        }
+    }
+
+    public BinarniStrom()
+    {
+        koren = null;
+    }
+
+    internal class Uzel //Node
+    {
+        public int hodn;
+        public Uzel levy, pravy;
+
+        public Uzel(int h)
+        {
+            hodn = h;
+            levy = pravy = null;
+        }
+    }
+
+    /*
+     * DÚ: count jako vlastnost, která se bude počítat
+     * Negenerický strom (nebo generický???)
+     */
+    
 }
