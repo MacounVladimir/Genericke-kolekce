@@ -21,19 +21,37 @@
 #endregion
 
 #region Binary tree
-Console.WriteLine("\nBinarni strom");
+//Console.WriteLine("\nBinarni strom");
 
-var binaryTree = new BinarniStrom();
+//var binaryTree = new BinarniStrom();
 
-binaryTree.Vloz(3);
-binaryTree.Vloz(5);
-binaryTree.Vloz(1);
-binaryTree.Vloz(7);
-binaryTree.Vloz(2);
-binaryTree.Vloz(4);
+//binaryTree.Vloz(3);
+//binaryTree.Vloz(5);
+//binaryTree.Vloz(1);
+//binaryTree.Vloz(7);
+//binaryTree.Vloz(2);
+//binaryTree.Vloz(4);
 
-Console.WriteLine(binaryTree.ToString());
+//Console.WriteLine(binaryTree.ToString());
 #endregion
+
+#region Generic binary tree
+Console.WriteLine("\nGenericky binarni strom");
+
+var genericBinaryTree = new GenerickyBinarniStrom<int>();
+
+genericBinaryTree.Vloz(3);
+genericBinaryTree.Vloz(5);
+genericBinaryTree.Vloz(1);
+genericBinaryTree.Vloz(7);
+genericBinaryTree.Vloz(2);
+genericBinaryTree.Vloz(4);
+
+Console.WriteLine(genericBinaryTree.ToString());
+//Console.WriteLine($"Pocet prvku v kolekci: {genericBinaryTree.Count}");
+Console.WriteLine($"Pocet prvku v kolekci: {genericBinaryTree.Pocet()}");
+#endregion
+
 
 class SpojovySeznam<T> //LinkedList
 {
@@ -228,48 +246,48 @@ class BinarniStrom
         }
     }
 
-    public bool odeber(int vstup)
-    {
-        if (koren == null)
-        {
-            throw new InvalidOperationException("Seznam je prazdny");
-        }
-        return odeberRekurzivne(koren, vstup);
-    }
+    //public bool odeber(int vstup)
+    //{
+    //    if (koren == null)
+    //    {
+    //        throw new InvalidOperationException("Seznam je prazdny");
+    //    }
+    //    return odeberRekurzivne(koren, vstup);
+    //}
 
-    bool odeberRekurzivne(Uzel koren, int vstup)
-    {
-        if (koren.hodn == vstup)
-        {
-            /*
-             * 1) nemam zadneho potomka, u predchudce zmenim na null
-             * 2) mam jednoho potomka, u predchudce nahradim sebe potomkem
-             * 3) mam oba nasledniky, u predchudce nahradim sebe jednim naslednikem a podstrom druheho nalsednika, zaradim do prvniho naslednika
-             */
-        }
-        else if (vstup <= koren.hodn) //pujdu doleva
-        {
-            if (koren.levy == null)
-            {
-                return false;
-            }
-            else
-            {
-                return odeberRekurzivne(koren.levy, vstup);
-            }
-        }
-        else //pujdu doprava
-        {
-            if (koren.pravy == null)
-            {
-                return false;
-            }
-            else
-            {
-                return odeberRekurzivne(koren.pravy, vstup);
-            }
-        }
-    }
+    //bool odeberRekurzivne(Uzel koren, int vstup)
+    //{
+    //    if (koren.hodn == vstup)
+    //    {
+    //        /*
+    //         * 1) nemam zadneho potomka, u predchudce zmenim na null
+    //         * 2) mam jednoho potomka, u predchudce nahradim sebe potomkem
+    //         * 3) mam oba nasledniky, u predchudce nahradim sebe jednim naslednikem a podstrom druheho nalsednika, zaradim do prvniho naslednika
+    //         */
+    //    }
+    //    else if (vstup <= koren.hodn) //pujdu doleva
+    //    {
+    //        if (koren.levy == null)
+    //        {
+    //            return false;
+    //        }
+    //        else
+    //        {
+    //            return odeberRekurzivne(koren.levy, vstup);
+    //        }
+    //    }
+    //    else //pujdu doprava
+    //    {
+    //        if (koren.pravy == null)
+    //        {
+    //            return false;
+    //        }
+    //        else
+    //        {
+    //            return odeberRekurzivne(koren.pravy, vstup);
+    //        }
+    //    }
+    //}
 
     string vystup = "";
 
@@ -325,4 +343,114 @@ class BinarniStrom
      * Negenerický strom (nebo generický???)
      */
     
+}
+
+
+class GenerickyBinarniStrom<T> where T : IComparable<T>
+{
+    Uzel koren;
+    public int Count { get; set; }
+
+    public void Vloz(T vstup)
+    {
+        //checkuju existenci korene
+        if (koren == null)
+        {
+            koren = new Uzel(vstup);
+            return;
+        }
+        VlozRekurzivne(koren, vstup);
+    }
+
+    void VlozRekurzivne(Uzel koren, T novy)
+    {
+        if (novy.CompareTo(koren.hodn) <= 0) //mensi a stejny prvky doleva
+        {
+            if (koren.levy == null)
+            {
+                koren.levy = new Uzel(novy);
+            }
+            else
+            {
+                VlozRekurzivne(koren.levy, novy);
+            }
+        }
+        else
+        {
+            if (koren.pravy == null)
+            {
+                koren.pravy = new Uzel(novy);
+            }
+            else
+            {
+                VlozRekurzivne(koren.pravy, novy);
+            }
+        }
+    }
+
+    string vystup = "";
+
+    public override string ToString()
+    {
+        Uzel temp = koren;
+
+        if (temp != null)
+        {
+            VypisRekurzivne(koren);
+        }
+
+        return vystup;
+    }
+
+    private void VypisRekurzivne(Uzel koren)
+    {
+        if (koren != null)
+        {
+            if (koren.levy != null)
+            {
+                VypisRekurzivne(koren.levy);
+            }
+
+            vystup += koren.hodn + " ";
+
+            if (koren.pravy != null)
+            {
+                VypisRekurzivne(koren.pravy);
+            }
+        }
+    }
+
+    public GenerickyBinarniStrom()
+    {
+        koren = null;
+    }
+
+    internal class Uzel //Node
+    {
+        public T hodn;
+        public Uzel levy, pravy;
+
+        public Uzel(T h)
+        {
+            hodn = h;
+            levy = pravy = null;
+        }
+    }
+    
+    public int Pocet()
+    {
+        return PocetRekurzivne(koren);
+    }
+
+    private int PocetRekurzivne(Uzel koren)
+    {
+        if (koren == null)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + PocetRekurzivne(koren.levy) + PocetRekurzivne(koren.pravy);
+        }
+    }
 }
